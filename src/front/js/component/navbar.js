@@ -11,7 +11,7 @@ export const Navbar = () => {
 
 	const logout = () => {
 		actions.logout();
-		navigate("/login")
+		navigate("/")
 	}
 	return (
 		<nav className="navbar navbar-light bg-light">
@@ -20,10 +20,13 @@ export const Navbar = () => {
 					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
 				</Link>
 				<div className="ml-auto">
-					<Link to="/demo">
-						<button className="btn btn-primary">Check the Context in action</button>
-					</Link>
-					{actions.isLoggedIn() && <button className="btn btn-primary" onClick={logout}>cierre de sesión</button>}
+					{!actions.isLoggedIn() && <Link to="/login">
+						<button className="btn btn-primary">Iniciar sesion</button>
+					</Link>}
+					{actions.isLoggedIn() && <Link to="/myprofile">
+						<button className="btn btn-primary mx-2">Mi perfil</button>
+					</Link>}
+					{actions.isLoggedIn() && <button className="btn btn-primary" onClick={logout}>Cerrar sesión</button>}
 				</div>
 			</div>
 		</nav>

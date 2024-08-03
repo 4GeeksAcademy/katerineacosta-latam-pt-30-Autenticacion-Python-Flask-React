@@ -27,7 +27,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					// fetching data from the backend
 					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
 					const data = await resp.json()
-					setStore({ message: data.message })
+					setStore({ ...getStore(), message: data.message })
 					// don't forget to return something, that is how the async resolves
 					return data;
 				} catch (error) {
@@ -46,9 +46,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 
 				//reset the global store
-				setStore({ demo: demo });
+				setStore({ ...getStore(), demo: demo });
 			},
 			signup: async (email, password) => {
+				setStore({ ...getStore(), error: null });
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + 'api/signup', {
 						method: 'POST',
@@ -61,13 +62,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 						})
 					});
 					const data = await resp.json();
-					setStore({ message: data.message });
+					setStore({ ...getStore(), message: data.message });
 
 				} catch {
-					setStore({ error: "Error creating user" });
+					setStore({ ...getStore(), error: "Error creating user" });
 				}
 			},
 			login: async (email, password) => {
+				setStore({ ...getStore(), error: null });
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + 'api/login', {
 						method: 'POST',
@@ -80,12 +82,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 						})
 					});
 					const data = await resp.json();
-					setStore({ message: data.message });
+					setStore({ ...getStore(), message: data.message });
 					if (data.token) {
 						sessionStorage.setItem('token', data.token);
 					}
 				} catch {
-					setStore({ error: "Error in login" });
+					setStore({ ...getStore(), error: "Error in login" });
 				}
 			},
 			logout: () => {
@@ -94,7 +96,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 			isLoggedIn: () => {
 				const token = sessionStorage.getItem('token');
 				return !!token;
-			}
+			},
+			getProfileInfo: async (email, password) => {
+				setStore({ ...getStore(), error: null });
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + 'api/profileInfo', {
+						method: 'GET',
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+						},
+					});
+					const data = await resp.json();
+					setStore({ ...getStore(), userInfo: data });
+
+				} catch {
+					setStore({ ...getStore(), error: "Error obteniendo informacion de usuario" });
+				}
+			},
 		}
 	};
 };

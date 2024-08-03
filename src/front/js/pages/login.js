@@ -33,7 +33,7 @@ export const Login = () => {
                     <label htmlFor="password" className="form-label">Password</label>
                     <input type="password" className="form-control" id="password" onChange={(e) => (handleOnChange(e, 'password'))} />
                 </div>
-                <button type="submit" className="btn btn-primary">Iniciar sesion</button>
+                <button type="submit" className="btn btn-primary">Enviar</button>
             </form>
         </div>
     );

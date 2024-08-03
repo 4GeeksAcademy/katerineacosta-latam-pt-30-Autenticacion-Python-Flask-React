@@ -6,7 +6,7 @@ from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
 api = Blueprint('api', __name__)
 
@@ -60,3 +60,18 @@ def post_login():
     access_token = create_access_token(identity=user.id)
 
     return jsonify({ "token": access_token, "user_id": user.id })
+
+@api.route('profileInfo', methods=['GET'])
+@jwt_required()
+def getProfileInfo():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if user is None:
+        return jsonify({"message": "User not found"})
+
+    user_data = {
+         "id": user.id,
+        "email": user.email
+    }
+
+    return jsonify(user_data), 200
